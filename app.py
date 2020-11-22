@@ -134,7 +134,7 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  venue = Venue.query.filter(Venue.id == venue_id).all()[0]
+  venue = Venue.query.get(venue_id)
   past_shows_data = []
   upcoming_shows_data = []
   
@@ -142,7 +142,7 @@ def show_venue(venue_id):
   upcoming_shows = [show for show in venue.shows if show.start_time >= datetime.now()]
   
   for past_show in past_shows:
-    artist = Artist.query.with_entities(Artist.name, Artist.image_link).filter(Artist.id == past_show.artist_id).all()[0]
+    artist = Artist.query.get(past_show.artist_id)
     past_shows_data.append({
       "artist_id": past_show.artist_id,
       "artist_name": artist.name,
@@ -151,7 +151,7 @@ def show_venue(venue_id):
     })
 
   for upcoming_show in upcoming_shows:
-    artist = Artist.query.with_entities(Artist.name, Artist.image_link).filter(Artist.id == upcoming_show.artist_id).all()[0]
+    artist = Artist.query.get(upcoming_show.artist_id)
     upcoming_shows_data.append({
       "artist_id": upcoming_show.artist_id,
       "artist_name": artist.name,
@@ -179,7 +179,7 @@ def show_venue(venue_id):
   return render_template('pages/show_venue.html', venue=data)
 
 def show_venue(venue_id):
-  venue = Venue.query.filter(Venue.id == venue_id).all()[0]
+  venue = Venue.query.get(venue_id)
   past_shows_data = []
   upcoming_shows_data = []
   
@@ -187,7 +187,7 @@ def show_venue(venue_id):
   upcoming_shows = [show for show in venue.shows if show.start_time >= datetime.now()]
   
   for past_show in past_shows:
-    artist = Artist.query.with_entities(Artist.name, Artist.image_link).filter(Artist.id == past_show.artist_id).all()[0]
+    artist = Artist.query.get(past_show.artist_id)
     past_shows_data.append({
       "artist_id": past_show.artist_id,
       "artist_name": artist.name,
@@ -196,7 +196,7 @@ def show_venue(venue_id):
     })
 
   for upcoming_show in upcoming_shows:
-    artist = Artist.query.with_entities(Artist.name, Artist.image_link).filter(Artist.id == upcoming_show.artist_id).all()[0]
+    artist = Artist.query.get(upcoming_show.artist_id)
     upcoming_shows_data.append({
       "artist_id": upcoming_show.artist_id,
       "artist_name": artist.name,
@@ -259,7 +259,7 @@ def create_venue_submission():
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
   try:
-    db.session.query(Venue).filter(Venue.id==venue_id).delete()
+    db.session.query(Venue).get(id==venue_id).delete()
     db.session.commit()
     flash('Venue was successfully deleted!')
   except:
@@ -298,7 +298,7 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-  artist = Artist.query.filter(Artist.id == artist_id).first()
+  artist = Artist.query.get(artist_id)
   past_shows_data = []
   upcoming_shows_data = []
   
@@ -306,7 +306,7 @@ def show_artist(artist_id):
   upcoming_shows = [show for show in artist.shows if show.start_time >= datetime.now()]
   
   for past_show in past_shows:
-    venue = Venue.query.with_entities(Venue.name, Venue.image_link).filter(Venue.id == past_show.venue_id).first()
+    venue = Venue.query.get(past_show.venue_id)
     past_shows_data.append({
       "venue_id": past_show.venue_id,
       "venue_name": venue.name,
@@ -315,7 +315,7 @@ def show_artist(artist_id):
     })
 
   for upcoming_show in upcoming_shows:
-    venue = Venue.query.with_entities(Venue.name, Venue.image_link).filter(Venue.id == upcoming_show.venue_id).first()
+    venue = Venue.query.get(upcoming_show.venue_id)
     upcoming_shows_data.append({
       "venue_id": upcoming_show.venue_id,
       "venue_name": venue.name,
@@ -438,8 +438,8 @@ def shows():
   shows = Show.query.all()
   data = []
   for show in shows:
-    artist = Artist.query.with_entities(Artist.name, Artist.image_link).filter(Artist.id == show.artist_id).first()
-    venue = Venue.query.with_entities(Venue.name).filter(Venue.id == show.artist_id).first()
+    artist = Artist.query.get(show.artist_id)
+    venue = Venue.query.get(show.artist_id)
     data.append({
         "venue_id": show.venue_id,
         "venue_name": venue.name,
